@@ -1,0 +1,39 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.textarea {
+  background-color: #eee;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  resize: none;
+  outline: none;
+  border: none;
+  margin:0;
+  font-size: 15px;
+  padding-left: 1rem;
+  box-sizing: border-box;
+  vertical-align:top;
+}
+.browser{
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  margin:0;
+  vertical-align:top;
+  background-color: white;
+}
+
+.border-right{
+  border-right: 1px solid rgb(209, 209, 209);
+}
