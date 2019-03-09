@@ -7,12 +7,14 @@ export class WindowLayout extends Component {
         super();
         this.state = {
             dragPosition:{ pos1: 0, pos2: 0, pos3: 0, pos4: 0 },
+            key: '',
             windowState: {
-                key: '',
+                title: '',
                 isVisible: false,
                 dragable: false,
                 onTop: false,
-                maximized: false
+                maximized: false,
+                minimized: false,
             }
         }
         this.windowRef = React.createRef();
@@ -26,34 +28,70 @@ export class WindowLayout extends Component {
             windowState:{
                 ...this.state.windowState,
                 ...this.props.windowState,
-                key: this.props.component.key,
                 dragable: ((this.props.component.key === "codeEditor") ? "false" : "true"),
-            }
+            },
+            key: this.props.component.key,
         });
         this.titleBarRef.current.onmousedown = this.dragMouseDown;
     }
 
+    componentDidUpdate(previousProps){
+        if(JSON.stringify(previousProps.windowState) !== JSON.stringify(this.props.windowState)){
+            this.setState({
+                ...this.state,
+                windowState:{
+                    ...this.state.windowState,
+                    ...this.props.windowState,
+                }
+            });  
+        }
+    }
+
+    handleClose = () => {
+        this.props.close(this.state.key);
+    }
+
+    handleMinimize = () => {
+        this.props.minimize(this.state.key);
+    }
 
     handleMaximize = () => {
-        this.setState({...this.state, windowState: {...this.state.windowState, dragable: (this.state.windowState.maximized ? true : false),  maximized: !this.state.windowState.maximized } })
+        this.props.maximize(this.state.key);
     }
-
-    onFocus = () => {
-        this.setState({...this.state, windowState: {...this.state.windowState,onTop: true}});
-    }
-    onBlur = () => {
-        this.setState({...this.state, windowState: {...this.state.windowState,onTop: false}});
+    handleOnTop = () => {
+        this.props.onTop(this.state.key);
     }
 
   render() {
+    let minimizeClass = this.state.key === "htmlEditor" ? "minimize-htmlEditor" : (
+                            this.state.key === "cssEditor" ? "minimize-cssEditor" : (
+                                this.state.key === "jsEditor" ? "minimize-jsEditor" : (
+                                    this.state.key === "browser" ? "minimize-browser" : (
+                                        this.state.key === "codeEditor" ? "minimize-codeEditor" : null
+                                    )
+                                )
+                            )
+                        )
     return (
-        <div className={"window" + (this.state.windowState.maximized ? " full-screen" : '') +(this.state.windowState.onTop ? " onTop" : '')} onMouseDown={this.onFocus} onMouseUp={this.onBlur} ref={this.windowRef}>
+        <div className={"window " + (this.state.windowState.maximized ? " full-screen" : '') + (this.state.windowState.onTop ? " onTop " : '') + (this.state.windowState.minimized ? minimizeClass : '')} onMouseDown={this.handleOnTop} ref={this.windowRef}>
             <div className="title-bar" ref={this.titleBarRef}>
                 <span className="close-btn" onClick={this.handleClose}></span>
                 <span className="minimize" onClick={this.handleMinimize}></span>
                 <span className="maximize" onClick={this.handleMaximize}></span>
+                <span className="title">{this.state.windowState.title}</span>
             </div>
             <div className="window-body">{this.props.component}</div>
+            <div onClick={this.handleMinimize} className={(this.state.windowState.minimized ? "overlay" : null)}>{
+                this.state.key === "htmlEditor" ? "HTML Editor" : (
+                    this.state.key === "cssEditor" ? "CSS Editor" : (
+                        this.state.key === "jsEditor" ? "JS Editor" : (
+                            this.state.key === "browser" ? "Browser" : (
+                                this.state.key === "codeEditor" ? "Code Editor" : null
+                            )
+                        )
+                    )
+                )
+            }</div>
         </div>
     )
   }
