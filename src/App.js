@@ -13,7 +13,7 @@ class App extends Component {
   constructor(){
     super();
     this.state = {
-      projectState: { html: '<!--Add your HTML here-->\n<h1 id="h1">Hello World<h1>',
+      projectState: { html: '<!--Add your HTML here-->\n<h1 id="h1">Hello World</h1>',
                       css: '/*CSS goes here!*/',
                       js: '//JS goes here' 
                     },
