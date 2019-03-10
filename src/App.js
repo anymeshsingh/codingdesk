@@ -53,7 +53,6 @@ class App extends Component {
                     onTop: true
                   },
     }
-    this.html = false;
   }
 
   handleHtmlChange = (html) => {
@@ -109,11 +108,11 @@ class App extends Component {
       
 
         <div className="dock">
-          <span className="fab fa-html5 html5" onClick={()=>{ this.setState({...this.state, htmlEditor:{ ...this.state.htmlEditor, isVisible: true }}, ()=>{this.handleWindowOnTop('htmlEditor')}) }}></span> 
-          <span className="fab fa-css3 css3" onClick={()=>{ this.setState({...this.state, cssEditor:{ ...this.state.cssEditor, isVisible: true }}, ()=>{this.handleWindowOnTop('cssEditor')}) }}></span>
-          <span className="fab fa-js js-logo" onClick={()=>{ this.setState({...this.state, jsEditor:{ ...this.state.jsEditor, isVisible: true }}, ()=>{this.handleWindowOnTop('jsEditor')}) }}></span>
-          <span className="fas fa-globe-asia globe" onClick={()=>{ this.setState({...this.state, browser:{ ...this.state.browser, isVisible: true }}, ()=>{this.handleWindowOnTop('browser')}) }}></span>
-          <span className="fas fa-code code" onClick={()=>{ this.setState({...this.state, codeEditor:{ ...this.state.codeEditor, isVisible: true }}, ()=>{this.handleWindowOnTop('codeEditor')}) }}></span>
+          <span className="fab fa-html5 html5" onClick={()=>{ this.setState({...this.state, htmlEditor:{ ...this.state.htmlEditor, minimized: false, isVisible: !this.state.htmlEditor.isVisible }}, ()=>{this.handleWindowOnTop('htmlEditor')}) }}></span> 
+          <span className="fab fa-css3 css3" onClick={()=>{ this.setState({...this.state, cssEditor:{ ...this.state.cssEditor, minimized: false, isVisible: !this.state.cssEditor.isVisible }}, ()=>{this.handleWindowOnTop('cssEditor')}) }}></span>
+          <span className="fab fa-js js-logo" onClick={()=>{ this.setState({...this.state, jsEditor:{ ...this.state.jsEditor, minimized: false, isVisible: !this.state.jsEditor.isVisible }}, ()=>{this.handleWindowOnTop('jsEditor')}) }}></span>
+          <span className="fas fa-globe-asia globe" onClick={()=>{ this.setState({...this.state, browser:{ ...this.state.browser, minimized: false, isVisible: !this.state.browser.isVisible }}, ()=>{this.handleWindowOnTop('browser')}) }}></span>
+          <span className="fas fa-code code" onClick={()=>{ this.setState({...this.state, codeEditor:{ ...this.state.codeEditor, minimized: false, isVisible: !this.state.codeEditor.isVisible }}, ()=>{this.handleWindowOnTop('codeEditor')}) }}></span>
         </div>
       </div>
     );

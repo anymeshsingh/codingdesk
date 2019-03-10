@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
-import { tabToIndent } from '../../Utilities/util'
+import React, { Component } from 'react';
+import { tabToIndent } from '../../Utilities/util';
+import { connect } from 'react-redux';
+import { updateJsState } from '../../store/actions/projectActions'
 
-export class Html extends Component {
+export class Javascript extends Component {
     constructor(){
         super();
         this.state = {
@@ -10,20 +12,24 @@ export class Html extends Component {
         }
     }
     componentDidMount(){
-      this.setState({...this.state, content: this.props.content})
+      // this.setState({...this.state, content: this.props.content})
+      this.setState({...this.props.js});
     }
 
     componentDidUpdate(previousProps){
-      // console.log((previousProps.content !== this.props.content) && (this.state.content !== this.props.content))
-      if((previousProps.content !== this.props.content) && (this.state.content !== this.props.content)){
-        this.setState({...this.state, content: this.props.content})
-      }
+      // if((previousProps.content !== this.props.content) && (this.state.content !== this.props.content)){
+      //   this.setState({...this.state, content: this.props.content})
+      // }
+
+      if((JSON.stringify(previousProps.js) !== JSON.stringify(this.props.js)) && (JSON.stringify(this.state) !== JSON.stringify(this.props.js))){
+        this.setState({...this.props.js});
+      }      
 
     }
 
     handleChange = (content) => {
       this.setState({ ...this.state, content }, ()=>{
-        this.props.handleJsChange(this.state.content);
+        this.props.handleJsChange(this.state);
       })
     }
 
@@ -34,4 +40,16 @@ export class Html extends Component {
   }
 }
 
-export default Html
+const mapStateToProps = (state) => {
+  return {
+    js: state.projectState.js
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleJsChange: (js) => { dispatch(updateJsState(js)) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Javascript);

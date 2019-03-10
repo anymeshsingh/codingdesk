@@ -1,22 +1,23 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 export class Browser extends Component {
 
     constructor(){
         super();
         this.browserRef = React.createRef();
-        this.state = { html: '', css: '', js: '' }
+        this.state = { html: {}, css: {}, js: {} }
     }
 
     componentDidMount(){
-        this.setState({...this.props.currentState}, ()=>{
-            this.reloadBrowser(this.state.html, this.state.css, this.state.js);
+        this.setState({...this.props.projectState}, ()=>{
+            this.reloadBrowser(this.state.html.content, this.state.css.content, this.state.js.content);
         })
     }
     componentDidUpdate(previousProps){
-        if (JSON.stringify(previousProps.currentState) !== JSON.stringify(this.props.currentState)) {
-            this.setState({ ...this.state, ...this.props.currentState}, ()=>{
-                this.reloadBrowser(this.state.html, this.state.css, this.state.js);
+        if (JSON.stringify(previousProps.projectState) !== JSON.stringify(this.props.projectState)) {
+            this.setState({ ...this.state, ...this.props.projectState}, ()=>{
+                this.reloadBrowser(this.state.html.content, this.state.css.content, this.state.js.content);
             })
         }
     }
@@ -48,4 +49,10 @@ export class Browser extends Component {
   }
 }
 
-export default Browser
+const mapStateToProps = (state) => {
+    return {
+        projectState: state.projectState
+    }
+}
+
+export default connect(mapStateToProps)(Browser);

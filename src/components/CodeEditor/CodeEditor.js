@@ -23,25 +23,25 @@ class CodeEditor extends Component {
             <div className="html-container">
                 <div className="title"><span><span className="fab fa-html5"></span> HTML</span></div>
                 <div className="content border-right">
-                    <Html content={this.props.currentState.html} handleHtmlChange={this.handleHtmlChange} />
+                    <Html />
                 </div>
             </div>
             <div className="css-container">
                 <div className="title"><span><span className="fab fa-css3"></span> CSS</span></div>
                 <div className="content border-right">
-                    <Css content={this.props.currentState.css} handleCssChange={this.handleCssChange} />
+                    <Css />
                 </div>
             </div>
             <div className="js-container">
                 <div className="title"><span><span className="fab fa-js"></span> JavaScript</span></div>
                 <div className="content">
-                    <Javascript content={this.props.currentState.js} handleJsChange={this.handleJsChange} />
+                    <Javascript />
                 </div>
             </div>
             <div className="browser-container">
                 <div className="title justify-center"><span><span className="fas fa-globe-asia"></span> Browser</span></div>
                 <div className="content">
-                    <Browser currentState={this.props.currentState} />
+                    <Browser />
                 </div>
             </div>
         </div>
