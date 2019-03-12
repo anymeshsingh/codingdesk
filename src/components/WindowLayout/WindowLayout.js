@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import './WindowLayout.scss';
+import { connect } from 'react-redux';
+import { closeWindow } from '../../store/actions/windowActions'
+import { minimizeWindow } from '../../store/actions/windowActions'
+import { mazimizeWindow } from '../../store/actions/windowActions'
+import { onTopWindow } from '../../store/actions/windowActions'
 
 export class WindowLayout extends Component {
 
@@ -11,7 +16,6 @@ export class WindowLayout extends Component {
             windowState: {
                 title: '',
                 isVisible: false,
-                dragable: false,
                 onTop: false,
                 maximized: false,
                 minimized: false,
@@ -22,28 +26,20 @@ export class WindowLayout extends Component {
     }
 
     componentDidMount(){
-        // console.log(this.props)
         this.setState({
             ...this.state,
-            windowState:{
-                ...this.state.windowState,
-                ...this.props.windowState,
-                dragable: ((this.props.component.key === "codeEditor") ? "false" : "true"),
-            },
-            key: this.props.component.key,
-        });
+            windowState:{...this.props.windowsState[this.props.component.key]},
+            key: this.props.component.key
+        })
         this.titleBarRef.current.onmousedown = this.dragMouseDown;
     }
 
     componentDidUpdate(previousProps){
-        if(JSON.stringify(previousProps.windowState) !== JSON.stringify(this.props.windowState)){
+        if(JSON.stringify(previousProps.windowsState[this.state.key]) !== JSON.stringify(this.props.windowsState[this.state.key])){
             this.setState({
                 ...this.state,
-                windowState:{
-                    ...this.state.windowState,
-                    ...this.props.windowState,
-                }
-            });  
+                windowState:{...this.props.windowsState[this.state.key]},
+            });
         }
     }
 
@@ -81,7 +77,7 @@ export class WindowLayout extends Component {
                 <span className="title">{this.state.windowState.title}</span>
             </div>
             <div className="window-body">{this.props.component}</div>
-            <div onClick={this.handleMinimize} className={(this.state.windowState.minimized ? "overlay" : null)}>{
+            <div onClick={this.handleMinimize} className={"overlay-hidden "+(this.state.windowState.minimized ? "overlay-show" : null)}>{
                 this.state.key === "htmlEditor" ? "HTML Editor" : (
                     this.state.key === "cssEditor" ? "CSS Editor" : (
                         this.state.key === "jsEditor" ? "JS Editor" : (
@@ -98,14 +94,12 @@ export class WindowLayout extends Component {
 
     dragMouseDown = (e) => {
         e.preventDefault()
-        if(this.state.windowState.dragable){
-            // get the mouse cursor position at startup:
-            this.setState({dragPosition:{pos3 : e.clientX}})
-            this.setState({dragPosition:{pos4 : e.clientY}})
-            document.onmouseup = this.closeDragElement;
-            // call a function whenever the cursor moves:
-            document.onmousemove = this.elementDrag;
-        }
+        // get the mouse cursor position at startup:
+        this.setState({dragPosition:{pos3 : e.clientX}})
+        this.setState({dragPosition:{pos4 : e.clientY}})
+        document.onmouseup = this.closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = this.elementDrag;
     }
     elementDrag = (e) => {
         e = e || window.event;
@@ -129,4 +123,18 @@ export class WindowLayout extends Component {
 
 }
 
-export default WindowLayout
+const mapStateToProps = (state) => {
+    return {
+        windowsState: state.windowsState
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        close: (key) => {dispatch(closeWindow(key))},
+        minimize: (key) => {dispatch(minimizeWindow(key))},
+        maximize: (key) => {dispatch(mazimizeWindow(key))},
+        onTop: (key) => {dispatch(onTopWindow(key))}
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WindowLayout);

@@ -1,122 +1,114 @@
 import React, { Component } from 'react';
 import './App.scss';
+//Components
 import CodeEditor from './components/CodeEditor/CodeEditor'
 import WindowLayout from './components/WindowLayout/WindowLayout';
 import Html from './components/HtmlComponent/Html';
 import Css from './components/CssComponent/Css';
 import Javascript from './components/JavascriptComponent/Javascript';
 import Browser from './components/Browser/Browser';
-// import TestLayout from './components/TestLayout/TestLayout';
+
+// Redux
+import { connect } from 'react-redux';
+import { closeWindow } from './store/actions/windowActions';
+import { onTopWindow } from './store/actions/windowActions';
+
+// React-Bootstrap
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 class App extends Component {
 
   constructor(){
     super();
+    this.appRef = React.createRef()
+    this.contextMenuRef = React.createRef()
     this.state = {
-      projectState: { html: '<!--Add your HTML here-->\n<h1 id="h1">Hello World</h1>',
-                      css: '/*CSS goes here!*/',
-                      js: '//JS goes here' 
-                    },
-      htmlEditor: { 
-                    title: 'HTML Editor',
-                    isVisible: false,
-                    maximized: false,
-                    minimized: false,
-                    onTop: false
-                  },
-      cssEditor: {
-                    title: 'CSS Editor',
-                    isVisible: false,
-                    maximized: false,
-                    minimized: false,
-                    onTop: false
-                  },
-      jsEditor: {
-                  title: 'Javascript Editor',
-                  isVisible: false,
-                  maximized: false,
-                  minimized: false,
-                  onTop: false
-                },
-      browser: {
-                title: 'Browser',
-                isVisible: false,
-                maximized: false,
-                minimized: false,
-                onTop: false
-              },
-      codeEditor: {
-                    title: 'Code Editor',
-                    isVisible: true,
-                    maximized: true,
-                    minimized: false,
-                    onTop: true
-                  },
+      contextMenu: {
+        isVisible: false,
+        x: 0,
+        y: 0
+      }
     }
   }
 
-  handleHtmlChange = (html) => {
-    this.setState({...this.state, projectState:{ ...this.state.projectState, html}});
-  }
-  handleCssChange = (css) => {
-    this.setState({...this.state, projectState:{ ...this.state.projectState, css}});
-  }
-  handleJsChange = (js) => {
-    this.setState({...this.state, projectState:{ ...this.state.projectState, js}});
-  }
-  handleProjectStateChange = (projectState) => {
-    this.setState({...this.state, projectState:{ ...this.state.projectState, ...projectState}}
-  )}
-
-  handleWindowClose = (key) => {
-    this.setState({...this.state,[key]: {...this.state[key],isVisible: false}});
-  }
-  handleWindowMinimize = (key) => {
-    this.setState({...this.state, [key]: {...this.state[key], maximized: false, minimized: !this.state[key].minimized}});
+  openContextMenu = (e) => {
+    e.preventDefault();
+    let windowHeight = this.appRef.current.offsetHeight;
+    let windowWidth = this.appRef.current.offsetWidth;
+    this.setState({contextMenu: {
+      isVisible: true,
+      x: (e.pageX > (windowWidth - 227 )) ? (e.pageX - 227) : e.pageX,
+      y: (e.pageY > (windowHeight - 150 )) ? (e.pageY - 150) : e.pageY
+    }})
   }
 
-  handleWindowMaximize = (key) => {
-    this.setState({...this.state, [key]: {...this.state[key], maximized: !this.state[key].maximized}});
-  }
-  handleWindowOnTop = (key) => {
-    this.setState({
-      ...this.state,
-      htmlEditor:{ ...this.state.htmlEditor, onTop: false },
-      cssEditor:{ ...this.state.cssEditor, onTop: false },
-      jsEditor:{ ...this.state.jsEditor, onTop: false },
-      codeEditor:{ ...this.state.codeEditor, onTop: false },
-      browser:{ ...this.state.browser, onTop: false },
-      [key]: { ...this.state[key], onTop: true}
-    })
+  closeContextMenu = () => {
+    if(this.state.contextMenu.isVisible){
+      this.setState({contextMenu:{isVisible:false,x:0,y:0}});
+    }
   }
 
   render() {
 
-    let htmlEditor = this.state.htmlEditor.isVisible ?  <WindowLayout windowState={this.state.htmlEditor} close={this.handleWindowClose} minimize={this.handleWindowMinimize} maximize={this.handleWindowMaximize} onTop={this.handleWindowOnTop} component={<Html key="htmlEditor" content={this.state.projectState.html} handleHtmlChange={this.handleHtmlChange} />} /> : null;
-    let cssEditor = this.state.cssEditor.isVisible ? <WindowLayout windowState={this.state.cssEditor} close={this.handleWindowClose} minimize={this.handleWindowMinimize} maximize={this.handleWindowMaximize} onTop={this.handleWindowOnTop} component={<Css key="cssEditor" content={this.state.projectState.css} handleCssChange={this.handleCssChange} />} /> : null;
-    let jsEditor = this.state.jsEditor.isVisible ? <WindowLayout windowState={this.state.jsEditor} close={this.handleWindowClose} minimize={this.handleWindowMinimize} maximize={this.handleWindowMaximize} onTop={this.handleWindowOnTop} component={<Javascript key="jsEditor" content={this.state.projectState.js} handleJsChange={this.handleHtmlChange} />} /> : null;
-    let browser = this.state.browser.isVisible ? <WindowLayout windowState={this.state.browser} close={this.handleWindowClose} minimize={this.handleWindowMinimize} maximize={this.handleWindowMaximize} onTop={this.handleWindowOnTop} component={<Browser key="browser" currentState={this.state.projectState} />} /> : null;
-    let codeEditor = this.state.codeEditor.isVisible ? <WindowLayout windowState={this.state.codeEditor} close={this.handleWindowClose} minimize={this.handleWindowMinimize} maximize={this.handleWindowMaximize} onTop={this.handleWindowOnTop} component={<CodeEditor key="codeEditor" handleProjectStateChange={this.handleProjectStateChange} currentState={this.state.projectState} />} /> : null;
-
+    let htmlEditor = this.props.windowsState.htmlEditor.isVisible ?  <WindowLayout component={<Html key="htmlEditor" />} /> : null;
+    let cssEditor = this.props.windowsState.cssEditor.isVisible ? <WindowLayout component={<Css key="cssEditor" />} /> : null;
+    let jsEditor = this.props.windowsState.jsEditor.isVisible ? <WindowLayout  component={<Javascript key="jsEditor" />} /> : null;
+    let browser = this.props.windowsState.browser.isVisible ? <WindowLayout component={<Browser key="browser" />} /> : null;
+    let codeEditor = this.props.windowsState.codeEditor.isVisible ? <WindowLayout component={<CodeEditor key="codeEditor"  />} /> : null;
+    let contextMenu = this.state.contextMenu.isVisible ? 
+                      (<div ref={this.contextMenuRef}>
+                        <ListGroup style={{position: 'absolute', zIndex: '200', top: this.state.contextMenu.y, left: this.state.contextMenu.x}}>
+                          <ListGroup.Item action style={{cursor: 'default'}}>Save Current Project</ListGroup.Item>
+                          <ListGroup.Item action style={{cursor: 'default'}}>Save Current Project As...</ListGroup.Item>
+                          <ListGroup.Item action style={{cursor: 'default'}}>Preferences</ListGroup.Item>
+                        </ListGroup>
+                      </div>) : null
     return (
-      <div className="app">
+      <div className="app" onContextMenu={this.openContextMenu} onClick={this.closeContextMenu} ref={this.appRef}>
         {htmlEditor}
         {cssEditor}
         {jsEditor}
         {browser}
         {codeEditor}
+        {contextMenu}
       
 
         <div className="dock">
-          <span className="fab fa-html5 html5" onClick={()=>{ this.setState({...this.state, htmlEditor:{ ...this.state.htmlEditor, minimized: false, isVisible: !this.state.htmlEditor.isVisible }}, ()=>{this.handleWindowOnTop('htmlEditor')}) }}></span> 
-          <span className="fab fa-css3 css3" onClick={()=>{ this.setState({...this.state, cssEditor:{ ...this.state.cssEditor, minimized: false, isVisible: !this.state.cssEditor.isVisible }}, ()=>{this.handleWindowOnTop('cssEditor')}) }}></span>
-          <span className="fab fa-js js-logo" onClick={()=>{ this.setState({...this.state, jsEditor:{ ...this.state.jsEditor, minimized: false, isVisible: !this.state.jsEditor.isVisible }}, ()=>{this.handleWindowOnTop('jsEditor')}) }}></span>
-          <span className="fas fa-globe-asia globe" onClick={()=>{ this.setState({...this.state, browser:{ ...this.state.browser, minimized: false, isVisible: !this.state.browser.isVisible }}, ()=>{this.handleWindowOnTop('browser')}) }}></span>
-          <span className="fas fa-code code" onClick={()=>{ this.setState({...this.state, codeEditor:{ ...this.state.codeEditor, minimized: false, isVisible: !this.state.codeEditor.isVisible }}, ()=>{this.handleWindowOnTop('codeEditor')}) }}></span>
+          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip-top'>HTML Editor</Tooltip>}>
+            <span className="fab fa-html5 html5" onClick={() => { this.props.open('htmlEditor'); this.props.onTop('htmlEditor') }}></span> 
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip-top'>CSS Editor</Tooltip>}>
+            <span className="fab fa-css3 css3" onClick={() => { this.props.open('cssEditor'); this.props.onTop('cssEditor') }}></span>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip-top'>Javascript Editor</Tooltip>}>
+            <span className="fab fa-js js-logo" onClick={() => { this.props.open('jsEditor'); this.props.onTop('jsEditor') }}></span>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip-top'>Browser</Tooltip>}>
+            <span className="fas fa-globe-asia globe" onClick={() => { this.props.open('browser'); this.props.onTop('browser') }}></span>
+          </OverlayTrigger>
+          <OverlayTrigger placement="top" overlay={<Tooltip id='tooltip-top'>Code Editor</Tooltip>}>
+            <span className="fas fa-code code" onClick={() => { this.props.open('codeEditor'); this.props.onTop('codeEditor') }}></span>
+          </OverlayTrigger>
         </div>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateTopProps = (state) => {
+  return {
+    windowsState: state.windowsState
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    open: (key) => {dispatch(closeWindow(key))},
+    onTop: (key) => {dispatch(onTopWindow(key))}
+  }
+}
+
+
+export default connect(mapStateTopProps,mapDispatchToProps)(App);

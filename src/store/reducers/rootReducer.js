@@ -4,7 +4,7 @@ import projectReducer from './projectReducer';
 
 const rootreducer = combineReducers({
     projectState: projectReducer,
-    windowState: windowReducer
+    windowsState: windowReducer
 });
 
 export default rootreducer;

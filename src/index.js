@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap/dist/js/bootstrap.bundle.min';
+import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/js/src/tooltip';
 import '@fortawesome/fontawesome-free/css/all.css'
 import './index.scss';
 import App from './App';

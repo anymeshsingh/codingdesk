@@ -88,7 +88,10 @@
 .onTop{
     z-index: 50;
 }
-.overlay{
+.overlay-hidden{
+    display: none;
+}
+.overlay-show{
     position: absolute;
     top: 0px;
     left: 0px;
